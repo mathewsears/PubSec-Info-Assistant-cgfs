@@ -389,17 +389,17 @@ module "video_indexer" {
 }
 
 // USER ROLES
-module "userRoles" {
-  source = "./core/security/role"
-  for_each = { for role in local.selected_roles : role => { role_definition_id = local.azure_roles[role] } }
+# module "userRoles" {
+#   source = "./core/security/role"
+#   for_each = { for role in local.selected_roles : role => { role_definition_id = local.azure_roles[role] } }
 
-  scope            = azurerm_resource_group.rg.id
-  principalId      = data.azurerm_client_config.current.object_id 
-  roleDefinitionId = each.value.role_definition_id
-  principalType    = var.isInAutomation ? "ServicePrincipal" : "User"
-  subscriptionId   = data.azurerm_client_config.current.subscription_id
-  resourceGroupId  = azurerm_resource_group.rg.id
-}
+#   scope            = azurerm_resource_group.rg.id
+#   principalId      = data.azurerm_client_config.current.object_id 
+#   roleDefinitionId = each.value.role_definition_id
+#   principalType    = var.isInAutomation ? "ServicePrincipal" : "User"
+#   subscriptionId   = data.azurerm_client_config.current.subscription_id
+#   resourceGroupId  = azurerm_resource_group.rg.id
+# }
 
 data "azurerm_resource_group" "existing" {
   count = var.useExistingAOAIService ? 1 : 0
@@ -407,74 +407,74 @@ data "azurerm_resource_group" "existing" {
 }
 
 # # // SYSTEM IDENTITY ROLES
-module "openAiRoleBackend" {
-  source = "./core/security/role"
+# module "openAiRoleBackend" {
+#   source = "./core/security/role"
 
-  scope            = var.useExistingAOAIService ? data.azurerm_resource_group.existing[0].id : azurerm_resource_group.rg.id
-  principalId      = module.backend.identityPrincipalId
-  roleDefinitionId = local.azure_roles.CognitiveServicesOpenAIUser
-  principalType    = "ServicePrincipal"
-  subscriptionId   = data.azurerm_client_config.current.subscription_id
-  resourceGroupId  = azurerm_resource_group.rg.id
-}
+#   scope            = var.useExistingAOAIService ? data.azurerm_resource_group.existing[0].id : azurerm_resource_group.rg.id
+#   principalId      = module.backend.identityPrincipalId
+#   roleDefinitionId = local.azure_roles.CognitiveServicesOpenAIUser
+#   principalType    = "ServicePrincipal"
+#   subscriptionId   = data.azurerm_client_config.current.subscription_id
+#   resourceGroupId  = azurerm_resource_group.rg.id
+# }
 
-module "storageRoleBackend" {
-  source = "./core/security/role"
+# module "storageRoleBackend" {
+#   source = "./core/security/role"
 
-  scope            = azurerm_resource_group.rg.id
-  principalId      = module.backend.identityPrincipalId
-  roleDefinitionId = local.azure_roles.StorageBlobDataReader
-  principalType    = "ServicePrincipal"
-  subscriptionId   = data.azurerm_client_config.current.subscription_id
-  resourceGroupId  = azurerm_resource_group.rg.id
-}
+#   scope            = azurerm_resource_group.rg.id
+#   principalId      = module.backend.identityPrincipalId
+#   roleDefinitionId = local.azure_roles.StorageBlobDataReader
+#   principalType    = "ServicePrincipal"
+#   subscriptionId   = data.azurerm_client_config.current.subscription_id
+#   resourceGroupId  = azurerm_resource_group.rg.id
+# }
 
-module "searchRoleBackend" {
-  source = "./core/security/role"
+# module "searchRoleBackend" {
+#   source = "./core/security/role"
 
-  scope            = azurerm_resource_group.rg.id
-  principalId      = module.backend.identityPrincipalId
-  roleDefinitionId = local.azure_roles.SearchIndexDataReader
-  principalType    = "ServicePrincipal"
-  subscriptionId   = data.azurerm_client_config.current.subscription_id
-  resourceGroupId  = azurerm_resource_group.rg.id
-}
+#   scope            = azurerm_resource_group.rg.id
+#   principalId      = module.backend.identityPrincipalId
+#   roleDefinitionId = local.azure_roles.SearchIndexDataReader
+#   principalType    = "ServicePrincipal"
+#   subscriptionId   = data.azurerm_client_config.current.subscription_id
+#   resourceGroupId  = azurerm_resource_group.rg.id
+# }
 
-module "storageRoleFunc" {
-  source = "./core/security/role"
+# module "storageRoleFunc" {
+#   source = "./core/security/role"
 
-  scope            = azurerm_resource_group.rg.id
-  principalId      = module.functions.function_app_identity_principal_id
-  roleDefinitionId = local.azure_roles.StorageBlobDataReader
-  principalType    = "ServicePrincipal"
-  subscriptionId   = data.azurerm_client_config.current.subscription_id
-  resourceGroupId  = azurerm_resource_group.rg.id
-}
+#   scope            = azurerm_resource_group.rg.id
+#   principalId      = module.functions.function_app_identity_principal_id
+#   roleDefinitionId = local.azure_roles.StorageBlobDataReader
+#   principalType    = "ServicePrincipal"
+#   subscriptionId   = data.azurerm_client_config.current.subscription_id
+#   resourceGroupId  = azurerm_resource_group.rg.id
+# }
 
-module "aviRoleBackend" {
-  source            = "./core/security/role"
-  count             = var.enableMultimedia ? 1 : 0
-  scope             = module.video_indexer[0].vi_id
-  principalId       = module.backend.identityPrincipalId
-  roleDefinitionId  = local.azure_roles.Contributor
-  principalType     = "ServicePrincipal"
-  subscriptionId    = data.azurerm_client_config.current.subscription_id
-  resourceGroupId   = azurerm_resource_group.rg.id 
-}
+# module "aviRoleBackend" {
+#   source            = "./core/security/role"
+#   count             = var.enableMultimedia ? 1 : 0
+#   scope             = module.video_indexer[0].vi_id
+#   principalId       = module.backend.identityPrincipalId
+#   roleDefinitionId  = local.azure_roles.Contributor
+#   principalType     = "ServicePrincipal"
+#   subscriptionId    = data.azurerm_client_config.current.subscription_id
+#   resourceGroupId   = azurerm_resource_group.rg.id 
+# }
 
-# // MANAGEMENT SERVICE PRINCIPAL ROLES
-module "openAiRoleMgmt" {
-  source = "./core/security/role"
-  # If leveraging an existing Azure OpenAI service, only make this assignment if not under automation.
-  # When under automation and using an existing Azure OpenAI service, this will result in a duplicate assignment error.
-  count = var.useExistingAOAIService ? var.isInAutomation ? 0 : 1 : 1
-  scope = var.useExistingAOAIService ? data.azurerm_resource_group.existing[0].id : azurerm_resource_group.rg.id
-  principalId     = module.entraObjects.azure_ad_mgmt_sp_id
-  roleDefinitionId = local.azure_roles.CognitiveServicesOpenAIUser
-  principalType   = "ServicePrincipal"
-  subscriptionId   = data.azurerm_client_config.current.subscription_id
-  resourceGroupId  = azurerm_resource_group.rg.id
-}
+# # // MANAGEMENT SERVICE PRINCIPAL ROLES
+# module "openAiRoleMgmt" {
+#   source = "./core/security/role"
+#   # If leveraging an existing Azure OpenAI service, only make this assignment if not under automation.
+#   # When under automation and using an existing Azure OpenAI service, this will result in a duplicate assignment error.
+#   count = var.useExistingAOAIService ? var.isInAutomation ? 0 : 1 : 1
+#   scope = var.useExistingAOAIService ? data.azurerm_resource_group.existing[0].id : azurerm_resource_group.rg.id
+#   principalId     = module.entraObjects.azure_ad_mgmt_sp_id
+#   roleDefinitionId = local.azure_roles.CognitiveServicesOpenAIUser
+#   principalType   = "ServicePrincipal"
+#   subscriptionId   = data.azurerm_client_config.current.subscription_id
+#   resourceGroupId  = azurerm_resource_group.rg.id
+# }
 
 module "azMonitor" {
   source            = "./core/logging/monitor"
